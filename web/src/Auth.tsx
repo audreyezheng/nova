@@ -1,5 +1,10 @@
 import { useState } from 'react'
 import { useAuth } from './AuthContext'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Loader2, Sparkles, Brain, Calendar, CheckCircle } from 'lucide-react'
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true)
@@ -32,156 +37,174 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200">
+      <nav className="border-b bg-background/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Nova</h1>
-              <span className="ml-2 text-sm text-indigo-600 font-medium">Beta</span>
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-8 w-8 text-primary" />
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold">Nova</h1>
+                <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">
+                  Beta
+                </span>
+              </div>
             </div>
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-indigo-600 hover:text-indigo-500 font-medium"
+              className="font-medium"
             >
               {isLogin ? 'Need an account?' : 'Already have an account?'}
-            </button>
+            </Button>
           </div>
         </div>
       </nav>
 
-      <div className="flex items-center justify-center px-4 py-12">
-        <div className="max-w-md w-full space-y-8">
+      <div className="container mx-auto flex items-center justify-center min-h-[calc(100vh-80px)] py-12">
+        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
+          
           {/* Hero Section */}
-          <div className="text-center">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              {isLogin ? 'Welcome back' : 'Meet Nova'}
-            </h2>
-            <p className="text-lg text-gray-600 mb-8">
-              {isLogin 
-                ? 'Sign in to continue planning with AI' 
-                : 'Your AI-powered task planning assistant that turns ideas into organized, scheduled action plans'
-              }
-            </p>
+          <div className="text-center lg:text-left space-y-8">
+            <div>
+              <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-6">
+                {isLogin ? 'Welcome back to Nova' : 'Meet Nova'}
+              </h2>
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                {isLogin 
+                  ? 'Continue planning with your AI-powered assistant' 
+                  : 'Transform your ideas into organized, scheduled action plans with the power of AI'
+                }
+              </p>
+            </div>
+
+            {/* Features Preview (only show on register) */}
+            {!isLogin && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8">
+                <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
+                    <Brain className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold mb-1">AI Planning</h3>
+                  <p className="text-sm text-muted-foreground">Smart task breakdown and prioritization</p>
+                </div>
+                <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
+                    <Calendar className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold mb-1">Smart Scheduling</h3>
+                  <p className="text-sm text-muted-foreground">Automatic calendar optimization</p>
+                </div>
+                <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
+                    <CheckCircle className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold mb-1">Task Management</h3>
+                  <p className="text-sm text-muted-foreground">Track progress and stay organized</p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Auth Form */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Username
-              </label>
-              <input
-                id="username"
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
-
-            {!isLogin && (
-              <>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                      First Name
-                    </label>
-                    <input
-                      id="firstName"
+          <div className="w-full max-w-md mx-auto lg:mx-0">
+            <Card className="shadow-2xl border-0 bg-card/50 backdrop-blur">
+              <CardHeader className="space-y-1 text-center">
+                <CardTitle className="text-2xl font-bold">
+                  {isLogin ? 'Sign In' : 'Create Account'}
+                </CardTitle>
+                <CardDescription>
+                  {isLogin 
+                    ? 'Enter your credentials to access Nova' 
+                    : 'Start organizing your tasks with AI'
+                  }
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      id="username"
                       type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      required
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      disabled={isLoading}
                     />
                   </div>
-                  <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                      Last Name
-                    </label>
-                    <input
-                      id="lastName"
-                      type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+
+                  {!isLogin && (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="firstName">First Name</Label>
+                          <Input
+                            id="firstName"
+                            type="text"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            disabled={isLoading}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="lastName">Last Name</Label>
+                          <Input
+                            id="lastName"
+                            type="text"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            disabled={isLoading}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      disabled={isLoading}
                     />
                   </div>
-                </div>
-              </>
-            )}
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
+                  {error && (
+                    <div className="text-sm text-destructive text-center p-3 bg-destructive/10 rounded-lg">
+                      {error}
+                    </div>
+                  )}
+
+                  <Button 
+                    type="submit" 
+                    disabled={isLoading} 
+                    className="w-full"
+                    size="lg"
+                  >
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isLogin ? 'Sign In' : 'Create Account'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </div>
-
-          {error && (
-            <div className="text-red-600 text-sm text-center">{error}</div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            >
-              {isLoading ? 'Please wait...' : (isLogin ? 'Sign in' : 'Create account')}
-            </button>
-          </div>
-
-            </div>
-          </form>
-          </div>
-
-          {/* Features Preview (only show on register) */}
-          {!isLogin && (
-            <div className="text-center mt-12">
-              <div className="grid grid-cols-3 gap-4 text-sm">
-                <div className="flex flex-col items-center">
-                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mb-2">🤖</div>
-                  <span className="text-gray-600">AI Planning</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mb-2">📅</div>
-                  <span className="text-gray-600">Smart Scheduling</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mb-2">✓</div>
-                  <span className="text-gray-600">Task Management</span>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
