@@ -155,7 +155,7 @@ SPECTACULAR_SETTINGS = {
 # CORS
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOWED_ORIGINS = [
-    "https://nova-backend-fs1b.onrender.com",
+    "https://nova-phi-five.vercel.app",
 ] if not DEBUG else []
 CORS_ALLOW_CREDENTIALS = True
 
