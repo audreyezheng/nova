@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-r7z))@bun@9=w1433vt#%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['*'] if DEBUG else os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = ['*'] if DEBUG else ['nova-backend-fs1b.onrender.com', '.vercel.app']
 
 
 # Application definition
@@ -153,7 +153,11 @@ SPECTACULAR_SETTINGS = {
 }
 
 # CORS
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+CORS_ALLOWED_ORIGINS = [
+    "https://nova-backend-fs1b.onrender.com",
+] if not DEBUG else []
+CORS_ALLOW_CREDENTIALS = True
 
 # LLM
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
