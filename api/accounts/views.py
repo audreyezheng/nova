@@ -2,7 +2,7 @@ from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import login, logout
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 
@@ -29,7 +29,6 @@ def login_view(request):
     if serializer.is_valid():
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
-        login(request, user)
         return Response({
             'token': token.key,
             'user': UserSerializer(user).data,
@@ -44,7 +43,6 @@ def logout_view(request):
     try:
         # Delete the user's token
         Token.objects.get(user=request.user).delete()
-        logout(request)
         return Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)
     except Token.DoesNotExist:
         return Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)

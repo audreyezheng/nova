@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'config.middleware.CsrfExemptMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -174,6 +175,11 @@ CSRF_TRUSTED_ORIGINS = [
     "https://nova-phi-five.vercel.app",
     "https://nova-2flj7hoft-audreyezheng-1565s-projects.vercel.app",
 ] if not DEBUG else []
+
+# Disable CSRF for API endpoints
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
+CSRF_USE_SESSIONS = False
 
 # LLM
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')

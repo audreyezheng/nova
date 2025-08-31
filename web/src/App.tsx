@@ -1,5 +1,4 @@
 
-
 import { useEffect, useState } from 'react'
 import './App.css'
 import { useAuth } from './AuthContext'
@@ -245,7 +244,7 @@ function App() {
             <CardContent className="pt-0 pb-4 overflow-y-auto">
               {upcoming.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  <XCircleIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <CircleIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p className="text-sm">No upcoming tasks yet.</p>
                   <p className="text-xs">Create your first plan below!</p>
                 </div>
