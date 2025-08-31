@@ -32,16 +32,42 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            {isLogin ? 'Sign in to Nova' : 'Create your Nova account'}
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Your AI-powered task planning assistant
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+      {/* Navigation */}
+      <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center">
+              <h1 className="text-2xl font-bold text-gray-900">Nova</h1>
+              <span className="ml-2 text-sm text-indigo-600 font-medium">Beta</span>
+            </div>
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-indigo-600 hover:text-indigo-500 font-medium"
+            >
+              {isLogin ? 'Need an account?' : 'Already have an account?'}
+            </button>
+          </div>
         </div>
+      </nav>
+
+      <div className="flex items-center justify-center px-4 py-12">
+        <div className="max-w-md w-full space-y-8">
+          {/* Hero Section */}
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              {isLogin ? 'Welcome back' : 'Meet Nova'}
+            </h2>
+            <p className="text-lg text-gray-600 mb-8">
+              {isLogin 
+                ? 'Sign in to continue planning with AI' 
+                : 'Your AI-powered task planning assistant that turns ideas into organized, scheduled action plans'
+              }
+            </p>
+          </div>
+
+          {/* Auth Form */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -133,19 +159,30 @@ export default function Auth() {
             </button>
           </div>
 
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => {
-                setIsLogin(!isLogin)
-                setError('')
-              }}
-              className="text-indigo-600 hover:text-indigo-500 text-sm"
-            >
-              {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-            </button>
+            </div>
+          </form>
           </div>
-        </form>
+
+          {/* Features Preview (only show on register) */}
+          {!isLogin && (
+            <div className="text-center mt-12">
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <div className="flex flex-col items-center">
+                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mb-2">🤖</div>
+                  <span className="text-gray-600">AI Planning</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mb-2">📅</div>
+                  <span className="text-gray-600">Smart Scheduling</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mb-2">✓</div>
+                  <span className="text-gray-600">Task Management</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
