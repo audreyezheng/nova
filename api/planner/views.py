@@ -4,7 +4,7 @@ import json
 import os
 from datetime import datetime, timedelta, time
 from django.conf import settings
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -73,13 +73,28 @@ class GenerateTasksView(APIView):
 
 
 class PlanViewSet(viewsets.ModelViewSet):
-    queryset = Plan.objects.all().order_by("-created_at")
     serializer_class = PlanSerializer
+
+    def get_queryset(self):
+        return Plan.objects.filter(user=self.request.user).order_by("-created_at")
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.all().order_by("-created_at")
     serializer_class = TaskSerializer
+
+    def get_queryset(self):
+        return Task.objects.filter(plan__user=self.request.user).order_by("-created_at")
+
+    def perform_create(self, serializer):
+        # Ensure the plan belongs to the user
+        plan = serializer.validated_data.get('plan')
+        if plan and plan.user != self.request.user:
+            from rest_framework import serializers as drf_serializers
+            raise drf_serializers.ValidationError("You can only create tasks for your own plans")
+        serializer.save()
 
 
 def _derive_default_plan_title(message: str) -> str:
@@ -152,6 +167,8 @@ def _call_openai_for_suggestions(message: str) -> List[Dict[str, Any]]:
 
 
 class LLMGenerateTasksView(APIView):
+    permission_classes = [permissions.AllowAny]  # Allow non-authenticated users for now
+    
     def post(self, request):
         message = request.data.get("message", "").strip()
         if not message:
@@ -164,9 +181,10 @@ class LLMGenerateTasksView(APIView):
 
 class UpcomingTasksView(APIView):
     def get(self, request):
-        # Tasks not done, ordered by due date with undated last
+        # Tasks not done for the current user, ordered by due date with undated last
         queryset = (
-            Task.objects.exclude(status=Task.STATUS_DONE)
+            Task.objects.filter(plan__user=request.user)
+            .exclude(status=Task.STATUS_DONE)
             .order_by("due_at__isnull", "due_at", "-created_at")
         )
         limit = int(request.query_params.get("limit", 20))
@@ -175,6 +193,7 @@ class UpcomingTasksView(APIView):
 
 
 class SchedulePreviewView(APIView):
+    permission_classes = [permissions.AllowAny]  # Allow non-authenticated users for now
     """Naive scheduler that proposes slots for tasks within the next 7 days.
 
     Request body: { tasks: [{ title, estimated_minutes?, priority?, due_at? }] }

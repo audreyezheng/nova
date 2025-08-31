@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import { useAuth } from './AuthContext'
+import Auth from './Auth'
 
 type Message = { role: 'user' | 'system'; content: string }
 type Suggestion = {
@@ -37,10 +39,13 @@ async function generateTasks(message: string): Promise<{ plan_title: string; tas
   return { plan_title: data.plan_title, tasks: data.tasks ?? [] }
 }
 
-async function createPlanWithTasks(title: string, tasks: Suggestion[]): Promise<number> {
+async function createPlanWithTasks(title: string, tasks: Suggestion[], token: string): Promise<number> {
   const planRes = await fetch('/api/planner/plans/', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
     body: JSON.stringify({ title }),
   })
   if (!planRes.ok) throw new Error('Failed to create plan')
@@ -50,7 +55,10 @@ async function createPlanWithTasks(title: string, tasks: Suggestion[]): Promise<
   for (const t of tasks) {
     await fetch('/api/planner/tasks/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`,
+      },
       body: JSON.stringify({
         plan: planId,
         title: t.title,
@@ -65,8 +73,12 @@ async function createPlanWithTasks(title: string, tasks: Suggestion[]): Promise<
   return planId
 }
 
-async function fetchUpcomingTasks(): Promise<Task[]> {
-  const res = await fetch('/api/planner/tasks/upcoming/')
+async function fetchUpcomingTasks(token: string): Promise<Task[]> {
+  const res = await fetch('/api/planner/tasks/upcoming/', {
+    headers: {
+      'Authorization': `Token ${token}`,
+    },
+  })
   if (!res.ok) return []
   return res.json()
 }
@@ -86,6 +98,7 @@ async function fetchSchedulePreview(tasks: Suggestion[]): Promise<SchedulePrevie
 }
 
 function App() {
+  const { isAuthenticated, user, logout, token } = useAuth()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -93,9 +106,15 @@ function App() {
   const [lastSuggested, setLastSuggested] = useState<Suggestion[] | null>(null)
   const [schedule, setSchedule] = useState<SchedulePreview | null>(null)
 
+  if (!isAuthenticated) {
+    return <Auth />
+  }
+
   const refreshUpcoming = async () => {
-    const tasks = await fetchUpcomingTasks()
-    setUpcoming(tasks)
+    if (token) {
+      const tasks = await fetchUpcomingTasks(token)
+      setUpcoming(tasks)
+    }
   }
 
   useEffect(() => {
@@ -120,11 +139,13 @@ function App() {
         { role: 'system', content: `Here are some tasks you might add:\n${bulletList}` },
       ])
       // Auto-create plan and tasks with suggested metadata
-      await createPlanWithTasks(plan_title, tasks)
-      setMessages((prev) => [
-        ...prev,
-        { role: 'system', content: `Created plan “${plan_title}” with ${tasks.length} tasks.` },
-      ])
+      if (token) {
+        await createPlanWithTasks(plan_title, tasks, token)
+        setMessages((prev) => [
+          ...prev,
+          { role: 'system', content: `Created plan "${plan_title}" with ${tasks.length} tasks.` },
+        ])
+      }
       await refreshUpcoming()
       setLastSuggested(tasks)
       setSchedule(null)
@@ -139,9 +160,31 @@ function App() {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4 p-4">
-      {/* Left: Upcoming */}
-      <div className="md:col-span-1 border rounded-xl p-4 bg-white shadow-sm overflow-auto max-h-[90vh]">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <h1 className="text-2xl font-bold text-gray-900">Nova</h1>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-700">
+                Welcome, {user?.first_name || user?.username}!
+              </span>
+              <button
+                onClick={logout}
+                className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto p-4">
+        <div className="grid grid-cols-3 gap-4">
+          {/* Left: Upcoming */}
+          <div className="md:col-span-1 border rounded-xl p-4 bg-white shadow-sm overflow-auto max-h-[80vh]">
         <h2 className="text-lg font-semibold mb-3">Upcoming</h2>
         {upcoming.length === 0 ? (
           <div className="text-sm text-gray-500">No upcoming tasks yet.</div>
@@ -163,8 +206,8 @@ function App() {
         )}
       </div>
 
-      {/* Right: Chat */}
-      <div className="col-span-2 border rounded-xl p-4 bg-white shadow-sm flex flex-col max-h-[90vh]">
+          {/* Right: Chat */}
+          <div className="col-span-2 border rounded-xl p-4 bg-white shadow-sm flex flex-col max-h-[80vh]">
         <div className="flex-1 overflow-auto">
           <div className="messages">
             {messages.map((m, idx) => (
@@ -248,6 +291,8 @@ function App() {
           />
           <button type="submit" disabled={isLoading}>Send</button>
         </form>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -26,4 +26,5 @@ urlpatterns = [
     # Apps
     path('api/health/', include('health.urls')),
     path('api/planner/', include('planner.urls')),
+    path('api/accounts/', include('accounts.urls')),
 ]
