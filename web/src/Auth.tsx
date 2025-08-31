@@ -4,7 +4,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader2, Sparkles, Brain, Calendar, CheckCircle } from 'lucide-react'
+import { 
+  ArrowPathIcon, 
+  SparklesIcon, 
+  CpuChipIcon, 
+  CalendarIcon, 
+  CheckCircleIcon 
+} from '@heroicons/react/24/outline'
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true)
@@ -43,7 +49,7 @@ export default function Auth() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-8 w-8 text-primary" />
+              <SparklesIcon className="h-8 w-8 text-primary" />
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold">Nova</h1>
                 <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">
@@ -84,21 +90,21 @@ export default function Auth() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8">
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
-                    <Brain className="h-6 w-6 text-primary" />
+                    <CpuChipIcon className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="font-semibold mb-1">AI Planning</h3>
                   <p className="text-sm text-muted-foreground">Smart task breakdown and prioritization</p>
                 </div>
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
-                    <Calendar className="h-6 w-6 text-primary" />
+                    <CalendarIcon className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="font-semibold mb-1">Smart Scheduling</h3>
                   <p className="text-sm text-muted-foreground">Automatic calendar optimization</p>
                 </div>
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
-                    <CheckCircle className="h-6 w-6 text-primary" />
+                    <CheckCircleIcon className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="font-semibold mb-1">Task Management</h3>
                   <p className="text-sm text-muted-foreground">Track progress and stay organized</p>
@@ -198,7 +204,7 @@ export default function Auth() {
                     className="w-full"
                     size="lg"
                   >
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isLoading && <ArrowPathIcon className="mr-2 h-4 w-4 animate-spin" />}
                     {isLogin ? 'Sign In' : 'Create Account'}
                   </Button>
                 </form>

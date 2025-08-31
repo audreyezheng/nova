@@ -1,3 +1,5 @@
+
+
 import { useEffect, useState } from 'react'
 import './App.css'
 import { useAuth } from './AuthContext'
@@ -7,7 +9,18 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
-import { Sparkles, Send, Calendar, Clock, CheckCircle, Circle, AlertCircle, User, LogOut, Plus } from 'lucide-react'
+import { 
+  SparklesIcon, 
+  PaperAirplaneIcon, 
+  CalendarIcon, 
+  ClockIcon, 
+  CheckCircleIcon, 
+  XCircleIcon, 
+  ExclamationTriangleIcon, 
+  UserIcon, 
+  ArrowRightOnRectangleIcon, 
+  PlusIcon 
+} from '@heroicons/react/24/outline'
 
 type Message = { role: 'user' | 'system'; content: string }
 type Suggestion = {
@@ -173,7 +186,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-8 w-8 text-primary" />
+              <SparklesIcon className="h-8 w-8 text-primary" />
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold">Nova</h1>
                 <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">
@@ -199,12 +212,12 @@ function App() {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
+                    <UserIcon className="mr-2 h-4 w-4" />
                     Profile
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout}>
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <ArrowRightOnRectangleIcon className="mr-2 h-4 w-4" />
                     Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -221,18 +234,18 @@ function App() {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Clock className="h-5 w-5" />
+                  <ClockIcon className="h-5 w-5" />
                   Upcoming
                 </CardTitle>
                 <Button variant="ghost" size="sm">
-                  <Plus className="h-4 w-4" />
+                  <PlusIcon className="h-4 w-4" />
                 </Button>
               </div>
             </CardHeader>
             <CardContent className="pt-0 pb-4 overflow-y-auto">
               {upcoming.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  <Circle className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <XCircleIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p className="text-sm">No upcoming tasks yet.</p>
                   <p className="text-xs">Create your first plan below!</p>
                 </div>
@@ -246,7 +259,7 @@ function App() {
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             {task.due_at && (
                               <span className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3" />
+                                <CalendarIcon className="h-3 w-3" />
                                 {new Date(task.due_at).toLocaleDateString()}
                               </span>
                             )}
@@ -259,7 +272,7 @@ function App() {
                             </span>
                             {task.estimated_minutes && (
                               <span className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
+                                <ClockIcon className="h-3 w-3" />
                                 {task.estimated_minutes}m
                               </span>
                             )}
@@ -267,11 +280,11 @@ function App() {
                         </div>
                         <div className="flex items-center gap-1">
                           {task.status === 'done' ? (
-                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <CheckCircleIcon className="h-4 w-4 text-green-600" />
                           ) : task.status === 'in_progress' ? (
-                            <AlertCircle className="h-4 w-4 text-yellow-600" />
+                            <ExclamationTriangleIcon className="h-4 w-4 text-yellow-600" />
                           ) : (
-                            <Circle className="h-4 w-4 text-muted-foreground" />
+                            <XCircleIcon className="h-4 w-4 text-muted-foreground" />
                           )}
                         </div>
                       </div>
@@ -286,7 +299,7 @@ function App() {
           <Card className="lg:col-span-2 flex flex-col h-[calc(100vh-200px)]">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Sparkles className="h-5 w-5" />
+                <SparklesIcon className="h-5 w-5" />
                 AI Planning Assistant
               </CardTitle>
             </CardHeader>
@@ -295,7 +308,7 @@ function App() {
               <div className="flex-1 overflow-y-auto mb-4 space-y-4 min-h-0">
                 {messages.length === 0 && (
                   <div className="text-center py-12 text-muted-foreground">
-                    <Sparkles className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <SparklesIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <h3 className="text-lg font-medium mb-2">Welcome to Nova</h3>
                     <p className="text-sm max-w-md mx-auto">
                       Describe what you need to accomplish and I'll help you break it down into actionable tasks with smart scheduling.
@@ -354,7 +367,7 @@ function App() {
                       disabled={isLoading}
                       size="sm"
                     >
-                      <Calendar className="mr-2 h-4 w-4" />
+                      <CalendarIcon className="mr-2 h-4 w-4" />
                       Schedule Tasks
                     </Button>
                   </div>
@@ -365,7 +378,7 @@ function App() {
               {schedule && (
                 <div className="mb-4 p-4 bg-muted/30 rounded-lg">
                   <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
+                    <CalendarIcon className="h-4 w-4" />
                     Weekly Schedule
                   </h3>
                   <div className="grid grid-cols-7 gap-2 mb-4">
@@ -419,7 +432,7 @@ function App() {
                   />
                 </div>
                 <Button type="submit" disabled={isLoading || !input.trim()} size="icon">
-                  <Send className="h-4 w-4" />
+                  <PaperAirplaneIcon className="h-4 w-4" />
                 </Button>
               </form>
             </CardContent>

@@ -165,8 +165,15 @@ SPECTACULAR_SETTINGS = {
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOWED_ORIGINS = [
     "https://nova-phi-five.vercel.app",
+    "https://nova-2flj7hoft-audreyezheng-1565s-projects.vercel.app",
 ] if not DEBUG else []
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF
+CSRF_TRUSTED_ORIGINS = [
+    "https://nova-phi-five.vercel.app",
+    "https://nova-2flj7hoft-audreyezheng-1565s-projects.vercel.app",
+] if not DEBUG else []
 
 # LLM
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
