@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: nova-backend
+    env: python
+    buildCommand: "cd api && pip install -r requirements.txt"
+    startCommand: "cd api && gunicorn config.wsgi:application"
+    healthCheckPath: /api/health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DEBUG
+        value: False
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nova-db
+          property: connectionString
+  - type: pserv
+    name: nova-db
+    env: postgresql
+    plan: free
+    databaseName: nova
+    databaseUser: nova
