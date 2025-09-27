@@ -1,10 +1,19 @@
+from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from rest_framework.authtoken.models import Token
 from .models import Plan, Task
 
 
 class GenerateTasksTests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="tester", email="tester@example.com", password="password123"
+        )
+        token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
+
     def test_wedding_message_generates_expected_tasks(self):
         url = reverse("generate-tasks")
         response = self.client.post(url, {"message": "I have a wedding coming up"}, format="json")
@@ -34,9 +43,11 @@ class GenerateTasksTests(APITestCase):
         task_id = task_resp.json()["id"]
 
         # Update task
-        patch_resp = self.client.patch(reverse("task-detail", args=[task_id]), {"status": "done"}, format="json")
+        patch_resp = self.client.patch(
+            reverse("task-detail", args=[task_id]), {"status": "completed"}, format="json"
+        )
         self.assertEqual(patch_resp.status_code, status.HTTP_200_OK)
-        self.assertEqual(patch_resp.json()["status"], "done")
+        self.assertEqual(patch_resp.json()["status"], "completed")
 
         # List plan detail
         detail_resp = self.client.get(reverse("plan-detail", args=[plan_id]))
@@ -51,5 +62,16 @@ class GenerateTasksTests(APITestCase):
         self.assertIn("tasks", data)
         self.assertTrue(len(data["tasks"]) > 0)
 
+    def test_task_creation_without_plan_creates_default(self):
+        response = self.client.post(
+            reverse("task-list"),
+            {"title": "Follow up"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        task_id = response.json()["id"]
+        task = Task.objects.get(id=task_id)
+        self.assertEqual(task.plan.title, "My Plan")
+        self.assertEqual(task.plan.user, self.user)
 
 

@@ -13,7 +13,7 @@ class TaskSuggestionSerializer(serializers.Serializer):
     )
     estimated_minutes = serializers.IntegerField(required=False, allow_null=True, min_value=1)
     status = serializers.ChoiceField(
-        choices=["todo", "in_progress", "done"], required=False, allow_null=True
+        choices=["pending", "in_progress", "completed"], required=False, allow_null=True
     )
 
 
@@ -40,5 +40,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
-
+        extra_kwargs = {
+            "plan": {"required": False},
+        }
 

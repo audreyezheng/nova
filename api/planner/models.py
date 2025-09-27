@@ -21,13 +21,13 @@ class Plan(models.Model):
 
 
 class Task(models.Model):
-    STATUS_TODO = "todo"
+    STATUS_PENDING = "pending"
     STATUS_IN_PROGRESS = "in_progress"
-    STATUS_DONE = "done"
+    STATUS_COMPLETED = "completed"
     STATUS_CHOICES = [
-        (STATUS_TODO, "To Do"),
+        (STATUS_PENDING, "Pending"),
         (STATUS_IN_PROGRESS, "In Progress"),
-        (STATUS_DONE, "Done"),
+        (STATUS_COMPLETED, "Completed"),
     ]
 
     PRIORITY_LOW = "low"
@@ -41,7 +41,7 @@ class Task(models.Model):
 
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name="tasks")
     title = models.CharField(max_length=255)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_TODO)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
     due_at = models.DateTimeField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
@@ -51,4 +51,3 @@ class Task(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover
         return self.title
-

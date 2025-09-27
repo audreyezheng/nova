@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { API_ENDPOINTS } from './config'
 
 interface User {
   id: number
@@ -38,7 +39,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     if (token) {
       // Verify token and get user profile
-      fetch('/api/accounts/profile/', {
+      fetch(API_ENDPOINTS.profile, {
         headers: {
           'Authorization': `Token ${token}`,
           'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [token])
 
   const login = async (username: string, password: string) => {
-    const response = await fetch('/api/accounts/login/', {
+    const response = await fetch(API_ENDPOINTS.login, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -82,7 +83,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   const register = async (username: string, email: string, password: string, firstName?: string, lastName?: string) => {
-    const response = await fetch('/api/accounts/register/', {
+    const response = await fetch(API_ENDPOINTS.register, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -110,7 +111,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = () => {
     if (token) {
-      fetch('/api/accounts/logout/', {
+      fetch(API_ENDPOINTS.logout, {
         method: 'POST',
         headers: {
           'Authorization': `Token ${token}`,

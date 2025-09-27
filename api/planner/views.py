@@ -94,7 +94,15 @@ class TaskViewSet(viewsets.ModelViewSet):
         if plan and plan.user != self.request.user:
             from rest_framework import serializers as drf_serializers
             raise drf_serializers.ValidationError("You can only create tasks for your own plans")
-        serializer.save()
+        if not plan:
+            plan = (
+                Plan.objects.filter(user=self.request.user, title="My Plan")
+                .order_by("id")
+                .first()
+            )
+            if not plan:
+                plan = Plan.objects.create(user=self.request.user, title="My Plan")
+        serializer.save(plan=plan)
 
 
 def _derive_default_plan_title(message: str) -> str:
@@ -113,7 +121,14 @@ def _call_openai_for_suggestions(message: str) -> List[Dict[str, Any]]:
     if not api_key:
         # Fallback: map to rule-based tasks, wrap with fields
         return [
-            {"title": t, "due_at": None, "notes": None, "priority": "medium", "estimated_minutes": None}
+            {
+                "title": t,
+                "due_at": None,
+                "notes": None,
+                "priority": "medium",
+                "estimated_minutes": None,
+                "status": Task.STATUS_PENDING,
+            }
             for t in suggest_tasks_from_message(message)
         ]
 
@@ -121,7 +136,14 @@ def _call_openai_for_suggestions(message: str) -> List[Dict[str, Any]]:
         from openai import OpenAI  # type: ignore
     except Exception:
         return [
-            {"title": t, "due_at": None, "notes": None, "priority": "medium", "estimated_minutes": None}
+            {
+                "title": t,
+                "due_at": None,
+                "notes": None,
+                "priority": "medium",
+                "estimated_minutes": None,
+                "status": Task.STATUS_PENDING,
+            }
             for t in suggest_tasks_from_message(message)
         ]
 
@@ -148,7 +170,14 @@ def _call_openai_for_suggestions(message: str) -> List[Dict[str, Any]]:
         content = completion.choices[0].message.content or "{}"
     except Exception:
         return [
-            {"title": t, "due_at": None, "notes": None, "priority": "medium", "estimated_minutes": None}
+            {
+                "title": t,
+                "due_at": None,
+                "notes": None,
+                "priority": "medium",
+                "estimated_minutes": None,
+                "status": Task.STATUS_PENDING,
+            }
             for t in suggest_tasks_from_message(message)
         ]
     try:
@@ -163,7 +192,10 @@ def _call_openai_for_suggestions(message: str) -> List[Dict[str, Any]]:
             return validated
     except Exception:
         pass
-    return [{"title": t, "due_at": None, "notes": None} for t in suggest_tasks_from_message(message)]
+    return [
+        {"title": t, "due_at": None, "notes": None, "status": Task.STATUS_PENDING}
+        for t in suggest_tasks_from_message(message)
+    ]
 
 
 class LLMGenerateTasksView(APIView):
@@ -184,7 +216,7 @@ class UpcomingTasksView(APIView):
         # Tasks not done for the current user, ordered by due date with undated last
         queryset = (
             Task.objects.filter(plan__user=request.user)
-            .exclude(status=Task.STATUS_DONE)
+            .exclude(status=Task.STATUS_COMPLETED)
             .order_by("due_at__isnull", "due_at", "-created_at")
         )
         limit = int(request.query_params.get("limit", 20))
@@ -289,5 +321,3 @@ class SchedulePreviewView(APIView):
             {"date": d.isoformat(), "items": schedule[d.isoformat()]} for d in week_days
         ]
         return Response({"week": week_payload, "quick_wins": quick_wins})
-
-
