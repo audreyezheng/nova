@@ -1,14 +1,30 @@
-// API Configuration
-export const API_BASE_URL = 'https://nova-backend-fs1b.onrender.com'
+// Allow overriding the API origin at build time with Vite envs.
+const envBase = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim()
+const defaultBase = "https://nova-backend-fs1b.onrender.com"
 
-// Use deployed backend for now since local setup is incomplete
+const computedBase = (() => {
+  if (!envBase) return defaultBase
+  if (envBase === "relative" || envBase === "auto") return ""
+  return envBase
+})()
+
+export const API_BASE_URL = computedBase
+
+const join = (path: string) => {
+  if (!API_BASE_URL) return path
+  const normalizedBase = API_BASE_URL.endsWith("/")
+    ? API_BASE_URL.slice(0, -1)
+    : API_BASE_URL
+  return `${normalizedBase}${path}`
+}
+
 export const API_ENDPOINTS = {
-  login: `${API_BASE_URL}/api/accounts/login/`,
-  register: `${API_BASE_URL}/api/accounts/register/`,
-  logout: `${API_BASE_URL}/api/accounts/logout/`,
-  profile: `${API_BASE_URL}/api/accounts/profile/`,
-  tasks: `${API_BASE_URL}/api/planner/tasks/`,
-  plans: `${API_BASE_URL}/api/planner/plans/`,
-  generate: `${API_BASE_URL}/api/planner/generate/llm/`,
-  schedule: `${API_BASE_URL}/api/planner/schedule/preview/`,
+  login: join("/api/accounts/login/"),
+  register: join("/api/accounts/register/"),
+  logout: join("/api/accounts/logout/"),
+  profile: join("/api/accounts/profile/"),
+  tasks: join("/api/planner/tasks/"),
+  plans: join("/api/planner/plans/"),
+  generate: join("/api/planner/generate/llm/"),
+  schedule: join("/api/planner/schedule/preview/"),
 }
